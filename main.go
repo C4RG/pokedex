@@ -212,23 +212,24 @@ func commandExplore(c *config, e string) error {
 	location := location{}
 	loc, exists := c.cache.Get(startingUrl + e)
 	if exists {
+		fmt.Printf("Exploring %s\n", e)
+		fmt.Printf("Found Pokemon:\n")
 		err := json.Unmarshal(loc, &location)
 		if err != nil {
 			return err
 		}
 		for _, p := range location.PokemonEnc {
 			fmt.Println(p.Pokemon.Name)
-
 		}
 		return nil
 	}
 	res, err := http.Get(startingUrl + e)
-	fmt.Println(startingUrl + e)
 	if err != nil {
 		return err
 	}
 	if res.Status != "200 OK" {
 		fmt.Printf("Invalid location! %s. Request status: %s", e, res.Status)
+		return fmt.Errorf("%s", res.Status)
 	}
 	fmt.Printf("Exploring %s\n", e)
 	fmt.Printf("Found Pokemon:\n")
